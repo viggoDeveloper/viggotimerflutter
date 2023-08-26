@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "53369158797",
+    "project_id": "viggotracker",
+    "storage_bucket": "viggotracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53369158797:android:b42506f6f6d10ed7a736c4",
+        "android_client_info": {
+          "package_name": "com.mycompany.viggogoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "53369158797-46jjkden324a7r5a02cg59g0lej6kukq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mycompany.viggogoapp",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "53369158797-ftcbu11t68uoueh726bti256abkqu3on.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFUUXSE0rWRjYrrDiM4TTllSLNRnMSTDs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "53369158797-ftcbu11t68uoueh726bti256abkqu3on.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "53369158797-pjj8ih3ldfhvl71sol15v6v5qo52t6sa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mycompany.viggogoapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

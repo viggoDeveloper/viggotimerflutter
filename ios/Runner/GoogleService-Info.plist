@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>53369158797-pjj8ih3ldfhvl71sol15v6v5qo52t6sa.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.53369158797-pjj8ih3ldfhvl71sol15v6v5qo52t6sa</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>53369158797-46jjkden324a7r5a02cg59g0lej6kukq.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBhNkS8D1UOlrOjrspCJFosj4LNf_jNnHc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>53369158797</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.mycompany.viggogoapp</string>
+	<key>PROJECT_ID</key>
+	<string>viggotracker</string>
+	<key>STORAGE_BUCKET</key>
+	<string>viggotracker.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:53369158797:ios:527e78cb07e9c9dea736c4</string>
+</dict>
+</plist>
