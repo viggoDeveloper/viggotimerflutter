@@ -339,8 +339,6 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                         if (_model.dropDownValue == null) {
                           return;
                         }
-                        await Future.delayed(
-                            const Duration(milliseconds: 10000));
                         ScaffoldMessenger.of(context).clearSnackBars();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -412,8 +410,6 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                                   FlutterFlowTheme.of(context).secondary,
                             ),
                           );
-                          if (_shouldSetState) setState(() {});
-                          return;
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -432,6 +428,8 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                           if (_shouldSetState) setState(() {});
                           return;
                         }
+
+                        context.pushNamed('home_Page');
 
                         if (_shouldSetState) setState(() {});
                       },
