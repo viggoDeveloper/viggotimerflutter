@@ -573,6 +573,14 @@ class _HomePageWidgetState extends State<HomePageWidget>
                                         currentUserDocument?.city, ''),
                                     ParamType.String,
                                   ),
+                                  'jw': serializeParam(
+                                    currentJwtToken,
+                                    ParamType.String,
+                                  ),
+                                  'user': serializeParam(
+                                    currentUserReference?.id,
+                                    ParamType.String,
+                                  ),
                                 }.withoutNulls,
                                 extra: <String, dynamic>{
                                   kTransitionInfoKey: TransitionInfo(

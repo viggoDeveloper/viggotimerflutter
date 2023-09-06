@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
 import '/backend/backend.dart';
+import '/backend/schema/structs/index.dart';
 
 import '../../auth/base_auth_user_provider.dart';
 
@@ -95,6 +96,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'home_Page',
           path: '/homePage',
+          requireAuth: true,
           builder: (context, params) => HomePageWidget(),
         ),
         FFRoute(
@@ -126,6 +128,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'mark_Attendance',
           path: '/markAttendance',
+          requireAuth: true,
           builder: (context, params) => MarkAttendanceWidget(
             name: params.getParam('name', ParamType.String),
             lastname: params.getParam('lastname', ParamType.String),
@@ -136,6 +139,8 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             post: params.getParam('post', ParamType.String),
             document: params.getParam('document', ParamType.String),
             city: params.getParam('city', ParamType.String),
+            jw: params.getParam('jw', ParamType.String),
+            user: params.getParam('user', ParamType.String),
           ),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
@@ -316,13 +321,14 @@ class FFRoute {
                 )
               : builder(context, ffParams);
           final child = appStateNotifier.loading
-              ? Center(
-                  child: SizedBox(
-                    width: 50.0,
-                    height: 50.0,
-                    child: SpinKitCircle(
-                      color: FlutterFlowTheme.of(context).primary,
-                      size: 50.0,
+              ? Container(
+                  color: FlutterFlowTheme.of(context).lineColor,
+                  child: Center(
+                    child: Image.asset(
+                      'assets/images/Sin_ttulo-1.png',
+                      width: 200.0,
+                      height: 200.0,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 )

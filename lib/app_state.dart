@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '/backend/backend.dart';
+import '/backend/schema/structs/index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
@@ -23,6 +24,16 @@ class FFAppState extends ChangeNotifier {
   bool get showFullList => _showFullList;
   set showFullList(bool _value) {
     _showFullList = _value;
+  }
+
+  DataUserStruct _data = DataUserStruct();
+  DataUserStruct get data => _data;
+  set data(DataUserStruct _value) {
+    _data = _value;
+  }
+
+  void updateDataStruct(Function(DataUserStruct) updateFn) {
+    updateFn(_data);
   }
 }
 

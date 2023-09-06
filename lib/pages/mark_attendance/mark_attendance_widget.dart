@@ -8,6 +8,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/upload_data.dart';
 import '/flutter_flow/permissions_util.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -28,6 +29,8 @@ class MarkAttendanceWidget extends StatefulWidget {
     required this.post,
     required this.document,
     required this.city,
+    required this.jw,
+    this.user,
   }) : super(key: key);
 
   final String? name;
@@ -39,6 +42,8 @@ class MarkAttendanceWidget extends StatefulWidget {
   final String? post;
   final String? document;
   final String? city;
+  final String? jw;
+  final String? user;
 
   @override
   _MarkAttendanceWidgetState createState() => _MarkAttendanceWidgetState();
@@ -109,7 +114,8 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                 key: _model.formKey,
                 autovalidateMode: AutovalidateMode.always,
                 child: Column(
-                  mainAxisSize: MainAxisSize.max,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     InkWell(
                       splashColor: Colors.transparent,
@@ -119,6 +125,9 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                       onTap: () async {
                         await requestPermission(cameraPermission);
                         final selectedMedia = await selectMedia(
+                          maxWidth: 280.00,
+                          maxHeight: 280.00,
+                          imageQuality: 86,
                           multiImage: false,
                         );
                         if (selectedMedia != null &&
@@ -129,6 +138,11 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
 
                           var downloadUrls = <String>[];
                           try {
+                            showUploadMessage(
+                              context,
+                              'Uploading file...',
+                              showLoading: true,
+                            );
                             selectedUploadedFiles = selectedMedia
                                 .map((m) => FFUploadedFile(
                                       name: m.storagePath.split('/').last,
@@ -149,6 +163,7 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                                 .map((u) => u!)
                                 .toList();
                           } finally {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             _model.isDataUploading = false;
                           }
                           if (selectedUploadedFiles.length ==
@@ -159,8 +174,10 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                                   selectedUploadedFiles.first;
                               _model.uploadedFileUrl = downloadUrls.first;
                             });
+                            showUploadMessage(context, 'Success!');
                           } else {
                             setState(() {});
+                            showUploadMessage(context, 'Failed to upload data');
                             return;
                           }
                         }
@@ -194,35 +211,37 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                               ),
                               duration: Duration(milliseconds: 4000),
                               backgroundColor:
-                                  FlutterFlowTheme.of(context).secondary,
+                                  FlutterFlowTheme.of(context).error,
                             ),
                           );
                         }
                       },
                       child: Container(
-                        width: 150.0,
-                        height: 150.0,
+                        width: 130.0,
+                        height: 130.0,
                         decoration: BoxDecoration(
                           color:
                               FlutterFlowTheme.of(context).secondaryBackground,
                           image: DecorationImage(
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
                             image: Image.asset(
-                              'assets/images/uploadimage.png',
+                              'assets/images/phone-camera_(1).png',
                             ).image,
                           ),
                           shape: BoxShape.circle,
                         ),
                         child: Container(
-                          width: 100.0,
-                          height: 100.0,
+                          width: 130.0,
+                          height: 130.0,
                           clipBehavior: Clip.antiAlias,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                           ),
-                          child: Image.network(
-                            _model.uploadedFileUrl,
-                            fit: BoxFit.cover,
+                          child: CachedNetworkImage(
+                            fadeInDuration: Duration(milliseconds: 10),
+                            fadeOutDuration: Duration(milliseconds: 10),
+                            imageUrl: _model.uploadedFileUrl,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ),
@@ -242,7 +261,7 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                         controller: _model.dropDownValueController ??=
                             FormFieldController<String>(null),
                         options: [
-                          'Hora de Llegada',
+                          'Hora de Entrada',
                           'Hora Salida Almuerzo',
                           'Hora Fin Almuerzo',
                           'Hora de Salida'
@@ -332,89 +351,216 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                         currentUserLocationValue = await getCurrentUserLocation(
                             defaultLocation: LatLng(0.0, 0.0));
                         var _shouldSetState = false;
-                        if (_model.formKey.currentState == null ||
-                            !_model.formKey.currentState!.validate()) {
-                          return;
-                        }
-                        if (_model.dropDownValue == null) {
-                          return;
-                        }
-                        ScaffoldMessenger.of(context).clearSnackBars();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Enviando...',
-                              style: TextStyle(
-                                color: FlutterFlowTheme.of(context).primaryText,
+                        if (_model.uploadedFileUrl != null &&
+                            _model.uploadedFileUrl != '') {
+                          var confirmDialogResponse = await showDialog<bool>(
+                                context: context,
+                                builder: (alertDialogContext) {
+                                  return AlertDialog(
+                                    title: Text('Cargo la Foto?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(
+                                            alertDialogContext, false),
+                                        child: Text('Cancelar'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(
+                                            alertDialogContext, true),
+                                        child: Text('Confirmar'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ) ??
+                              false;
+                          if (confirmDialogResponse) {
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Validando....',
+                                  style: TextStyle(
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                  ),
+                                ),
+                                duration: Duration(milliseconds: 2000),
+                                backgroundColor:
+                                    FlutterFlowTheme.of(context).secondary,
                               ),
-                            ),
-                            duration: Duration(milliseconds: 10000),
-                            backgroundColor:
-                                FlutterFlowTheme.of(context).secondary,
-                          ),
-                        );
+                            );
+                            if (_model.dropDownValue != null &&
+                                _model.dropDownValue != '') {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Validando...',
+                                    style: TextStyle(
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
+                                    ),
+                                  ),
+                                  duration: Duration(milliseconds: 3000),
+                                  backgroundColor:
+                                      FlutterFlowTheme.of(context).secondary,
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Por Favor Seleccione un horario.',
+                                    style: TextStyle(
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
+                                    ),
+                                  ),
+                                  duration: Duration(milliseconds: 4000),
+                                  backgroundColor:
+                                      FlutterFlowTheme.of(context).error,
+                                ),
+                              );
+                              if (_shouldSetState) setState(() {});
+                              return;
+                            }
 
-                        var timeUserRecordReference =
-                            TimeUserRecord.collection.doc();
-                        await timeUserRecordReference
-                            .set(createTimeUserRecordData(
-                          idUser: currentUserReference,
-                          timetype: _model.dropDownValue,
-                          photoCheck: _model.uploadedFileUrl,
-                          reason: _model.textController.text,
-                          hour: getCurrentTimestamp,
-                          name: widget.name,
-                          lastname: widget.lastname,
-                          phone: widget.phone,
-                          email: widget.email,
-                          post: widget.post,
-                          campus: widget.campus,
-                          brand: widget.brand,
-                          document: widget.document,
-                          location: currentUserLocationValue,
-                          city: widget.city,
-                        ));
-                        _model.apiResultbfp =
-                            TimeUserRecord.getDocumentFromData(
-                                createTimeUserRecordData(
-                                  idUser: currentUserReference,
-                                  timetype: _model.dropDownValue,
-                                  photoCheck: _model.uploadedFileUrl,
-                                  reason: _model.textController.text,
-                                  hour: getCurrentTimestamp,
-                                  name: widget.name,
-                                  lastname: widget.lastname,
-                                  phone: widget.phone,
-                                  email: widget.email,
-                                  post: widget.post,
-                                  campus: widget.campus,
-                                  brand: widget.brand,
-                                  document: widget.document,
-                                  location: currentUserLocationValue,
-                                  city: widget.city,
+                            var timeUserRecordReference =
+                                TimeUserRecord.collection.doc();
+                            await timeUserRecordReference
+                                .set(createTimeUserRecordData(
+                              idUser: currentUserReference,
+                              timetype: _model.dropDownValue,
+                              photoCheck: _model.uploadedFileUrl,
+                              reason: _model.textController.text,
+                              hour: getCurrentTimestamp,
+                              name: widget.name,
+                              lastname: widget.lastname,
+                              phone: widget.phone,
+                              email: widget.email,
+                              post: widget.post,
+                              campus: '',
+                              brand: widget.brand,
+                              document: widget.document,
+                              location: currentUserLocationValue,
+                              city: widget.city,
+                            ));
+                            _model.documentExits =
+                                TimeUserRecord.getDocumentFromData(
+                                    createTimeUserRecordData(
+                                      idUser: currentUserReference,
+                                      timetype: _model.dropDownValue,
+                                      photoCheck: _model.uploadedFileUrl,
+                                      reason: _model.textController.text,
+                                      hour: getCurrentTimestamp,
+                                      name: widget.name,
+                                      lastname: widget.lastname,
+                                      phone: widget.phone,
+                                      email: widget.email,
+                                      post: widget.post,
+                                      campus: '',
+                                      brand: widget.brand,
+                                      document: widget.document,
+                                      location: currentUserLocationValue,
+                                      city: widget.city,
+                                    ),
+                                    timeUserRecordReference);
+                            _shouldSetState = true;
+                            if (_model.documentExits != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Registro Guardado.',
+                                    style: TextStyle(
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
+                                    ),
+                                  ),
+                                  duration: Duration(milliseconds: 4000),
+                                  backgroundColor:
+                                      FlutterFlowTheme.of(context).secondary,
                                 ),
-                                timeUserRecordReference);
-                        _shouldSetState = true;
-                        if (_model.apiResultbfp != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Registro guardado.',
-                                style: TextStyle(
-                                  color:
-                                      FlutterFlowTheme.of(context).primaryText,
+                              );
+                              await Future.delayed(
+                                  const Duration(milliseconds: 9000));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Error al crear el registro.',
+                                    style: TextStyle(
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
+                                    ),
+                                  ),
+                                  duration: Duration(milliseconds: 4000),
+                                  backgroundColor:
+                                      FlutterFlowTheme.of(context).error,
                                 ),
+                              );
+                              if (_shouldSetState) setState(() {});
+                              return;
+                            }
+
+                            confirmDialogResponse = await showDialog<bool>(
+                                  context: context,
+                                  builder: (alertDialogContext) {
+                                    return AlertDialog(
+                                      title: Text('Desea Cerar Sesion'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(
+                                              alertDialogContext, false),
+                                          child: Text('No'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(
+                                              alertDialogContext, true),
+                                          child: Text('Si'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ) ??
+                                false;
+                            if (confirmDialogResponse) {
+                              GoRouter.of(context).prepareAuthEvent();
+                              await authManager.signOut();
+                              GoRouter.of(context).clearRedirectLocation();
+
+                              context.pushNamedAuth(
+                                  'login_page', context.mounted);
+                            } else {
+                              context.pushNamedAuth(
+                                  'home_Page', context.mounted);
+
+                              if (_shouldSetState) setState(() {});
+                              return;
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Por favor tome la foto.',
+                                  style: TextStyle(
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                  ),
+                                ),
+                                duration: Duration(milliseconds: 4000),
+                                backgroundColor:
+                                    FlutterFlowTheme.of(context).error,
                               ),
-                              duration: Duration(milliseconds: 4000),
-                              backgroundColor:
-                                  FlutterFlowTheme.of(context).secondary,
-                            ),
-                          );
+                            );
+                            if (_shouldSetState) setState(() {});
+                            return;
+                          }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                'Error al guardar.',
+                                'Por favor tome la foto.',
                                 style: TextStyle(
                                   color:
                                       FlutterFlowTheme.of(context).primaryText,
@@ -422,14 +568,12 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                               ),
                               duration: Duration(milliseconds: 4000),
                               backgroundColor:
-                                  FlutterFlowTheme.of(context).secondary,
+                                  FlutterFlowTheme.of(context).error,
                             ),
                           );
                           if (_shouldSetState) setState(() {});
                           return;
                         }
-
-                        context.pushNamed('home_Page');
 
                         if (_shouldSetState) setState(() {});
                       },
@@ -449,7 +593,8 @@ class _MarkAttendanceWidgetState extends State<MarkAttendanceWidget> {
                         textStyle:
                             FlutterFlowTheme.of(context).titleSmall.override(
                                   fontFamily: 'Readex Pro',
-                                  color: Colors.white,
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
                                 ),
                         elevation: 3.0,
                         borderSide: BorderSide(
